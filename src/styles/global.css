@@ -1,0 +1,143 @@
+/* ===========================================================================
+   设计系统 — 胶片 / 模拟感的编辑式博客（见 CLAUDE.md §5）
+   v1：浅色（light）。深色模式留作后续。
+   =========================================================================== */
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+
+:root {
+  /* 色彩 */
+  --bg:        #F6F3ED; /* 象牙底 */
+  --bg-soft:   #EDE6DA; /* 标签 / 卡片底 */
+  --ink:       #211C17; /* 正文墨色 */
+  --ink-soft:  #5A534A; /* 次级文字 */
+  --muted:     #8C8278; /* 弱化 / 元信息 */
+  --line:      #E5DFD3; /* 发丝分隔线 */
+  --accent:    #E35414; /* 复古暖橙：链接 / hover / active / 鼠标指针 */
+  --accent-ink:#C2440F; /* 橙字落浅底时用的深一档（保证对比度可读） */
+  --accent-soft: #F6DBCB; /* 柔和橙：高亮胶囊底（克制、统一于标签风格） */
+  --accent-tint: rgba(227, 84, 20, 0.16); /* ::selection 的柔和橙底 */
+  --tag-essay: #7A5A38; /* essay 标签字（底 --bg-soft） */
+  --tag-photo-bg: #E3EAE6; /* photo 标签底 */
+  --accent-2:  #3E6356; /* 深苔绿：photo 标签字 */
+
+  /* 字体 */
+  --font-serif: 'Noto Serif SC', 'Songti SC', 'Source Han Serif SC', serif;
+  --font-sans:  'Inter', 'Noto Sans SC', 'PingFang SC', system-ui, sans-serif;
+  --font-mono:  ui-monospace, 'SFMono-Regular', monospace;
+
+  /* 形状 / 节奏 */
+  --radius:    8px;
+  --radius-sm: 4px;     /* 图片缩略 */
+  --maxw-read: 34em;    /* 正文阅读行宽 */
+
+  /* 布局 */
+  --sidebar-w: 16rem;
+  --gap:       3.5rem;
+  --pad:       2rem;
+}
+
+/* ---- reset ---- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: 17px;
+  line-height: 1.85;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img { max-width: 100%; height: auto; display: block; }
+
+/* ---- 高亮 / selection（柔和橙、统一于标签的圆角观感）---- */
+::selection { background: var(--accent-tint); color: var(--accent-ink); }
+
+/* 正文内强调 / 高亮：柔和橙底 + 圆角胶囊，与 essay/photo 标签风格统一 */
+mark,
+.hl {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  padding: 0.05em 0.4em;
+  border-radius: var(--radius-sm);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* ---- 链接 ---- */
+a { color: var(--accent-ink); text-decoration: none; }
+a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+/* ---- 标题 ---- */
+h1, h2, h3, h4 { font-family: var(--font-serif); font-weight: 600; line-height: 1.35; color: var(--ink); }
+
+/* ---- UI 小字（大写英文，sans）---- */
+.eyebrow {
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* ---- 自定义复古旋钮指针：仅内容区/可点击元素 ---- */
+.cursor-knob,
+.cursor-knob a,
+.cursor-knob button { cursor: url('/knob.svg') 10 10, auto; }
+
+/* ===========================================================================
+   布局：桌面端侧栏常驻；移动端折叠为顶部菜单
+   =========================================================================== */
+.layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  gap: var(--gap);
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 3.5rem var(--pad) 5rem;
+}
+.layout.wide { max-width: 72rem; }
+.main { min-width: 0; }
+
+/* 胶片质感颗粒：细密随机噪点（feTurbulence），比规则点阵更自然、更克制 */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 150px 150px;
+}
+
+/* 纸感 / 褶皱：大尺度低频噪点形成柔和明暗起伏，极淡 */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+  background-size: 600px 600px;
+}
+
+/* ---- 移动端汉堡开关（CSS-only，零 JS）---- */
+.nav-toggle { display: none; }
+.nav-toggle-label { display: none; }
+
+@media (max-width: 720px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+    padding: 1.25rem 1.25rem 3.5rem;
+  }
+  body { font-size: 16px; }
+}

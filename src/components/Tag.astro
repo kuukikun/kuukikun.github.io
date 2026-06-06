@@ -1,0 +1,32 @@
+---
+interface Props {
+  type: 'essay' | 'photo';
+}
+const { type } = Astro.props;
+const label = type === 'photo' ? 'PHOTO' : 'ESSAY';
+---
+
+<span class={`tag tag-${type}`}>{label}</span>
+
+<style>
+  .tag {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 0.66rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.12em 0.6em;
+    border-radius: 999px;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+  .tag-essay {
+    background: var(--bg-soft);
+    color: var(--tag-essay);
+  }
+  .tag-photo {
+    background: var(--tag-photo-bg);
+    color: var(--accent-2);
+  }
+</style>

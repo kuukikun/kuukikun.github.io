@@ -1,0 +1,126 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const timeline = [
+  { time: '2018.09 – 2022.06', place: '杭州' },
+  { time: '2022.09 – 2023.03', place: '札幌' },
+  { time: '2023.04 – 2025.03', place: '東京' },
+  { time: '2025.04 –', place: '神戸' },
+];
+
+const links = [
+  { label: 'Instagram', value: '@riku_99l', href: 'https://www.instagram.com/riku_99l/' },
+  { label: 'X (Twitter)', value: '@kuukimori', href: 'https://twitter.com/kuukimori' },
+  { label: '知乎专栏', value: '空气喫茶店', href: 'https://www.zhihu.com/column/kuuki-cafe' },
+  { label: 'Gmail', value: 'billah109lu@gmail.com', href: 'mailto:billah109lu@gmail.com' },
+];
+---
+
+<BaseLayout title="关于" description="关于空気 · 空気の喫茶店">
+  <article class="about">
+    <header class="about-head">
+      <p class="eyebrow">About</p>
+      <h1>这里是空気</h1>
+    </header>
+
+    <div class="prose">
+      <p>「空気」とは、吸いて吐いた物である。<mark>做最酷的 Lawyer。</mark></p>
+      <p>
+        现居神户，慶應義塾大学法学研究科・民事法学専攻修士毕业，研究方向民法。
+        愿你在此驻足片刻，沏一壶茶，享受一分宁静。遇见你很高兴～
+      </p>
+
+      <h2 class="eyebrow section">近况</h2>
+      <p>
+        结束了为期 4 个月的就职活动，今春入职一家跨国企业的法务，
+        今后希望能作为 in-house lawyer 在企业法务领域有所精进。
+      </p>
+      <p>
+        本科时参与了导师的一项法学书籍翻译工作，或许你会读到我翻译的章节——
+        以这样的方式相遇，也是一种幸运吧。喜欢的组合是 ヨルシカ、YOASOBI、
+        ずっと真夜中でいいのに、あたらよ。
+      </p>
+
+      <h2 class="eyebrow section">途中</h2>
+      <ul class="timeline">
+        {timeline.map((t) => (
+          <li>
+            <span class="t-time">{t.time}</span>
+            <span class="t-place">{t.place}</span>
+          </li>
+        ))}
+      </ul>
+      <p class="quote">
+        <em>City of stars, are you shining just for me?</em><br />
+        <span class="quote-src">— La La Land</span>
+      </p>
+
+      <h2 class="eyebrow section">联系</h2>
+      <ul class="links">
+        {links.map((l) => (
+          <li>
+            <span class="l-label">{l.label}</span>
+            <a href={l.href}>{l.value}</a>
+          </li>
+        ))}
+        <li>
+          <span class="l-label">微信公众号</span>
+          <span>空气森林</span>
+        </li>
+      </ul>
+
+      <p class="support">本站由 Astro 构建，部署于 GitHub Pages。欢迎和我闲聊～</p>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .about { max-width: var(--maxw-read); }
+  .about-head { margin-bottom: 2rem; }
+  .about-head .eyebrow { font-size: 0.78rem; }
+  .about-head h1 { margin: 0.4rem 0 0; font-size: 1.7rem; }
+
+  .prose p { margin: 0 0 1.2rem; line-height: 1.9; }
+  .section { display: block; margin: 2.4rem 0 0.9rem; font-size: 0.78rem; }
+
+  .timeline { list-style: none; margin: 0 0 1.4rem; padding: 0; }
+  .timeline li {
+    display: flex;
+    gap: 1rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .t-time {
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    color: var(--muted);
+    min-width: 11rem;
+  }
+  .t-place { font-weight: 600; }
+
+  .quote { color: var(--ink-soft); }
+  .quote-src { font-family: var(--font-sans); font-size: 0.8rem; color: var(--muted); }
+
+  .links { list-style: none; margin: 0 0 1.4rem; padding: 0; }
+  .links li { display: flex; gap: 1rem; padding: 0.35rem 0; }
+  .l-label {
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    color: var(--muted);
+    min-width: 7rem;
+  }
+
+  .support {
+    margin-top: 2.4rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 720px) {
+    .timeline li { flex-direction: column; gap: 0.1rem; }
+    .t-time { min-width: 0; }
+    .links li { flex-direction: column; gap: 0.1rem; }
+  }
+</style>

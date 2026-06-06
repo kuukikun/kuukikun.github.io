@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostListItem from '../../components/PostListItem.astro';
+
+const posts = (
+  await getCollection('posts', ({ data }) => !data.draft && data.type === 'essay')
+).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout title="随笔" description="空気の喫茶店 · 随笔">
+  <header class="page-head">
+    <p class="eyebrow">Essays</p>
+    <p class="lede">文字为主的随笔与笔记，共 {posts.length} 篇。</p>
+  </header>
+  <div class="list">
+    {posts.map((post) => <PostListItem post={post} />)}
+  </div>
+</BaseLayout>
+
+<style>
+  .page-head {
+    margin-bottom: 1.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .page-head .eyebrow { font-size: 0.78rem; }
+  .lede {
+    margin: 0.5rem 0 0;
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+  }
+</style>

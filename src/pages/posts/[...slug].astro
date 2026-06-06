@@ -1,0 +1,289 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Tag from '../../components/Tag.astro';
+
+export const getStaticPaths = (async () => {
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const { type, title, date, gallery } = post.data;
+const { Content, headings } = await render(post);
+
+// 文章内目录（TOC）：取 h2/h3 标题，按层级显示
+const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+const showToc = toc.length >= 2;
+const minDepth = showToc ? Math.min(...toc.map((h) => h.depth)) : 2;
+
+const d = date;
+const fmtDate = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+---
+
+<BaseLayout title={title} description={post.data.summary} reading>
+  <div class={type === 'photo' ? 'reading wide' : 'reading'}>
+    {showToc && (
+      <details class="toc toc-mobile">
+        <summary class="eyebrow">目录</summary>
+        <nav class="toc-inner">
+          <ul>
+            {toc.map((h) => (
+              <li class={`toc-d${h.depth - minDepth}`}>
+                <a href={`#${h.slug}`} class="toc-link" data-toc-link>{h.text}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </details>
+    )}
+
+    <article class={`post post-${type}`}>
+      <header class="post-head">
+        <div class="meta">
+          <time datetime={d.toISOString()}>{fmtDate}</time>
+          <Tag type={type} />
+        </div>
+        <h1>{title}</h1>
+      </header>
+
+      {gallery && (
+        <div class="gallery">
+          {gallery.map((g) => (
+            <figure>
+              <Image src={g.src} alt={g.alt} widths={[480, 960, 1600]} sizes="(max-width: 720px) 100vw, 640px" />
+              {g.caption && <figcaption>{g.caption}</figcaption>}
+            </figure>
+          ))}
+        </div>
+      )}
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      <p class="back"><a href="/">← 回到首页</a></p>
+    </article>
+
+    {showToc && (
+      <aside class="toc toc-side" aria-label="文章目录">
+        <div class="toc-inner">
+          <p class="eyebrow toc-head">目录</p>
+          <nav>
+            <ul>
+              {toc.map((h) => (
+                <li class={`toc-d${h.depth - minDepth}`}>
+                  <a href={`#${h.slug}`} class="toc-link" data-toc-link>{h.text}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      </aside>
+    )}
+  </div>
+</BaseLayout>
+
+<script>
+  // 轻量 scroll-spy：高亮当前章节（idle 加载，尊重 prefers-reduced-motion 由 CSS 处理）
+  const init = () => {
+    const headings = Array.from(
+      document.querySelectorAll('.prose h2[id], .prose h3[id]'),
+    ) as HTMLElement[];
+    const links = Array.from(document.querySelectorAll('[data-toc-link]'));
+    if (!headings.length || !links.length) return;
+
+    const byId = new Map<string, Element[]>();
+    links.forEach((a) => {
+      const id = decodeURIComponent((a.getAttribute('href') || '').replace(/^#/, ''));
+      if (!byId.has(id)) byId.set(id, []);
+      byId.get(id)!.push(a);
+    });
+
+    let currentId: string | null = null;
+    const setCurrent = (id: string | null) => {
+      if (id === currentId) return;
+      if (currentId) (byId.get(currentId) || []).forEach((a) => a.classList.remove('is-current'));
+      currentId = id;
+      if (id) (byId.get(id) || []).forEach((a) => a.classList.add('is-current'));
+    };
+
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      let cur = headings[0].id;
+      for (const h of headings) {
+        if (h.getBoundingClientRect().top <= 120) cur = h.id;
+        else break;
+      }
+      setCurrent(cur);
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    update();
+  };
+
+  if ('requestIdleCallback' in window) requestIdleCallback(() => init(), { timeout: 2000 });
+  else setTimeout(init, 300);
+</script>
+
+<style>
+  /* ===== 聚焦阅读列：居中，TOC 落在右外侧 margin ===== */
+  .reading {
+    max-width: var(--maxw-read); /* 34em */
+    margin: 0 auto;
+    position: relative;
+  }
+  .reading.wide { max-width: 44em; }
+
+  .post-head { margin-bottom: 2rem; }
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.6rem;
+  }
+  .meta time {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+  .post-head h1 {
+    margin: 0;
+    font-size: 1.7rem;
+    line-height: 1.4;
+  }
+
+  .gallery { margin: 0 0 2.2rem; }
+  .gallery figure { margin: 0 0 1.4rem; }
+  .gallery :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-sm);
+  }
+  .gallery figcaption {
+    margin-top: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.76rem;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+  }
+
+  /* ===== 正文排版（#8）===== */
+  .prose { line-height: 1.8; text-align: left; }
+  .prose :global(p) { margin: 0 0 1em; }
+
+  /* 分节标题阶梯与间距（#4） */
+  .prose :global(h2) { margin: 2.5em 0 0.6em; font-size: 1.35rem; scroll-margin-top: 1.5rem; }
+  .prose :global(h3) { margin: 2em 0 0.5em; font-size: 1.15rem; scroll-margin-top: 1.5rem; }
+
+  .prose :global(blockquote) {
+    margin: 1.2rem 0;
+    padding-left: 1rem;
+    border-left: 2px solid var(--line);
+    color: var(--ink-soft);
+  }
+  .prose :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    background: var(--bg-soft);
+    padding: 0.1em 0.35em;
+    border-radius: var(--radius-sm);
+  }
+  .prose :global(ul), .prose :global(ol) { margin: 0 0 1em; padding-left: 1.4em; }
+  .prose :global(li) { margin: 0.3em 0; }
+
+  /* ===== 表格（#3）：去外框、hairline 行分隔、表头浅底 ===== */
+  .prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    margin: 1.4rem 0;
+  }
+  .prose :global(th), .prose :global(td) {
+    padding: 8px 12px;
+    text-align: left;
+    border: none;
+    border-bottom: 1px solid var(--line);
+  }
+  .prose :global(th) { font-weight: 600; background: var(--bg-soft); }
+
+  .back {
+    margin-top: 3rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+  }
+
+  /* ===== 目录（#2）===== */
+  .toc-inner {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  .toc ul { list-style: none; margin: 0; padding: 0; }
+  .toc li { margin: 0.3rem 0; }
+  .toc-link {
+    display: block;
+    padding: 0.1rem 0 0.1rem 0.9rem;
+    margin-left: -1px;
+    border-left: 2px solid transparent;
+    color: var(--muted);
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .toc-link:hover { color: var(--accent); text-decoration: none; }
+  .toc-link.is-current { color: var(--accent); border-left-color: var(--accent); }
+  .toc-d1 .toc-link { padding-left: 1.9rem; }
+
+  /* 右外侧 sticky 目录（宽屏） */
+  .toc-side {
+    position: absolute;
+    top: 0;
+    left: calc(100% + 2.5rem);
+    width: 11rem;
+    height: 100%;
+  }
+  .toc-side .toc-inner {
+    position: sticky;
+    top: 2rem;
+    border-left: 1px solid var(--line);
+    padding-left: 1rem;
+  }
+  .toc-head { margin: 0 0 0.7rem; font-size: 0.66rem; font-weight: 700; }
+
+  /* 窄屏目录：折叠到正文顶部 */
+  .toc-mobile { display: none; }
+
+  @media (max-width: 1080px) {
+    .toc-side { display: none; }
+    .toc-mobile {
+      display: block;
+      margin-bottom: 2rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 0.7rem 0.9rem;
+    }
+    .toc-mobile summary {
+      cursor: pointer;
+      font-size: 0.66rem;
+      font-weight: 700;
+    }
+    .toc-mobile .toc-inner { margin-top: 0.6rem; }
+    .toc-mobile .toc-link { border-left: none; padding-left: 0; margin-left: 0; }
+    .toc-mobile .toc-d1 .toc-link { padding-left: 1rem; }
+  }
+</style>

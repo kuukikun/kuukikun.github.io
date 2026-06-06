@@ -1,0 +1,17 @@
+# build output
+dist/
+# generated types
+.astro/
+# dependencies
+node_modules/
+# logs
+npm-debug.log*
+# environment variables
+.env
+.env.production
+# macOS
+.DS_Store
+# old Hexo source (reference only, not part of the Astro site)
+clone_blog/
+# local editor / preview config
+.claude/

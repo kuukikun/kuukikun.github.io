@@ -1,0 +1,88 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostListItem from '../components/PostListItem.astro';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+
+const VISIBLE = 4;
+const initial = posts.slice(0, VISIBLE);
+const rest = posts.slice(VISIBLE);
+---
+
+<BaseLayout title="空気の喫茶店">
+  <section class="intro-block">
+    <p>
+      这里是空気。「空気」とは、吸いて吐いた物である。
+    </p>
+    <p>
+      现居神户，慶應義塾大学法学研究科民事法学专攻修士毕业，研究方向民法。
+      愿你在此驻足片刻，沏一壶茶，享受一分宁静——这里有随笔，也有摄影日记。
+    </p>
+  </section>
+
+  <section class="recent">
+    <h2 class="eyebrow recent-head">Recent</h2>
+    <div class="list">
+      {initial.map((post) => <PostListItem post={post} />)}
+
+      {rest.length > 0 && (
+        <>
+          <input type="checkbox" id="moreToggle" class="more-toggle" hidden />
+          <div class="more-list">
+            {rest.map((post) => <PostListItem post={post} />)}
+          </div>
+          <label for="moreToggle" class="more-btn" aria-label="展开更多文章">
+            More Posts
+          </label>
+        </>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .intro-block {
+    max-width: var(--maxw-read);
+    margin-bottom: 3rem;
+  }
+  .intro-block p {
+    margin: 0 0 1rem;
+    font-size: 1.02rem;
+    line-height: 1.9;
+    color: var(--ink);
+  }
+  .intro-block p:first-child { color: var(--ink-soft); }
+
+  .recent-head {
+    margin: 0 0 1.4rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* 折叠的「更多」列表（CSS-only，零 JS） */
+  .more-list { display: none; }
+  .more-toggle:checked ~ .more-list { display: block; }
+  .more-toggle:checked ~ .more-btn { display: none; }
+
+  /* More Posts 胶囊：沿用 essay/photo 标签的圆角观感 */
+  .more-btn {
+    display: inline-block;
+    margin-top: 1.4rem;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.42em 1em;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    user-select: none;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .more-btn:hover { background: var(--accent); color: #fff; }
+</style>

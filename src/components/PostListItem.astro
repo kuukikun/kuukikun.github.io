@@ -1,0 +1,94 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import Tag from './Tag.astro';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+const { post } = Astro.props;
+const { type, title, date, summary, cover } = post.data;
+const href = `/posts/${post.id}/`;
+
+const d = date;
+const fmtDate = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+---
+
+<article class={`item item-${type}`}>
+  <div class="body">
+    <div class="meta">
+      <time datetime={d.toISOString()}>{fmtDate}</time>
+      <Tag type={type} />
+    </div>
+    <h3 class="title"><a href={href}>{title}</a></h3>
+    {summary && <p class="summary">{summary}</p>}
+  </div>
+  {cover && (
+    <a class="thumb" href={href} tabindex="-1" aria-hidden="true">
+      <Image src={cover} alt={title} width={264} height={176} loading="lazy" />
+    </a>
+  )}
+</article>
+
+<style>
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    padding: 1.2rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .item:first-of-type { padding-top: 0; }
+
+  /* 文字列恒定在左，左缘统一对齐 */
+  .body { flex: 1; min-width: 0; order: 0; }
+
+  /* 缩略图固定尺寸放右（仅 PHOTO 有），3:2，防加载跳动 */
+  .thumb { flex: 0 0 auto; order: 1; width: 132px; }
+  .thumb :global(img) {
+    width: 132px;
+    height: 88px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+  }
+
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.35rem;
+  }
+  .meta time {
+    font-family: var(--font-sans);
+    font-size: 0.74rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+
+  .title {
+    margin: 0 0 0.3rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+  .title a { color: var(--ink); }
+  .title a:hover { color: var(--accent); text-decoration: none; }
+
+  .summary {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  @media (max-width: 720px) {
+    .item { gap: 1rem; }
+    .thumb, .thumb :global(img) { width: 100px; }
+    .thumb :global(img) { height: 67px; }
+    .title { font-size: 1rem; }
+  }
+</style>

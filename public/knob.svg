@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <!-- 复古旋钮（rotary knob）：圆钮 + 指示位置的刻度线，扁平分层，无渐变/模糊 -->
+  <!-- 白色描边：在深浅照片上都可见 -->
+  <circle cx="10" cy="10" r="8.5" fill="#ffffff"/>
+  <!-- 深一档橙作底，向右下偏移当阴影面 -->
+  <circle cx="10.6" cy="10.7" r="7" fill="#C2440F"/>
+  <!-- 亮橙作顶面 -->
+  <circle cx="10" cy="10" r="7" fill="#E35414"/>
+  <!-- 旋钮边沿的一圈深色描边，强调“钮”的立体感 -->
+  <circle cx="10" cy="10" r="7" fill="none" stroke="#C2440F" stroke-width="0.8"/>
+  <!-- 指示刻度线：从中心指向约 11 点方向（旋钮的标志特征） -->
+  <line x1="10" y1="10" x2="6.7" y2="5.4" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- 中心轴点 -->
+  <circle cx="10" cy="10" r="1.15" fill="#7E2C0A"/>
+</svg>

@@ -1,0 +1,22 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = '做最酷的Lawyer。' } = Astro.props;
+const SITE = '空気の喫茶店';
+const fullTitle = title === SITE ? title : `${title} · ${SITE}`;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<meta name="author" content="空気" />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content="website" />

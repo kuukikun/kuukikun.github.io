@@ -1,0 +1,107 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Sidebar from '../components/Sidebar.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  wide?: boolean;
+  /** 聚焦阅读版式：无左侧站点导航，仅顶部极简栏 + 居中阅读列（用于文章页） */
+  reading?: boolean;
+}
+const { title, description, wide = false, reading = false } = Astro.props;
+
+const pathname = Astro.url.pathname;
+const nav = [
+  { label: 'ESSAYS', href: '/essays/' },
+  { label: 'PHOTOS', href: '/photos/' },
+  { label: 'ABOUT', href: '/about/' },
+];
+const isActive = (href: string) => pathname.startsWith(href);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <BaseHead title={title} description={description} />
+  </head>
+  <body class="cursor-knob">
+    {reading ? (
+      <>
+        <header class="topbar">
+          <div class="topbar-inner">
+            <a class="topbar-home" href="/">空気の喫茶店</a>
+            <nav class="topbar-nav" aria-label="主导航">
+              {nav.map((item) => (
+                <a href={item.href} class={isActive(item.href) ? 'active' : ''}>{item.label}</a>
+              ))}
+            </nav>
+          </div>
+        </header>
+        <main class="reading-main">
+          <slot />
+        </main>
+      </>
+    ) : (
+      <div class={wide ? 'layout wide' : 'layout'}>
+        <Sidebar />
+        <main class="main">
+          <slot />
+        </main>
+      </div>
+    )}
+  </body>
+</html>
+
+<style>
+  /* ---- 聚焦阅读版式：顶部极简栏 ---- */
+  .topbar {
+    position: relative;
+    z-index: 2;
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar-inner {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 1.2rem var(--pad);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .topbar-home {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .topbar-home:hover { color: var(--accent); text-decoration: none; }
+  .topbar-nav {
+    display: flex;
+    gap: 1.1rem;
+    font-family: var(--font-sans);
+  }
+  .topbar-nav a {
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .topbar-nav a:hover { color: var(--accent); text-decoration: none; }
+  .topbar-nav a.active { color: var(--accent-ink); }
+
+  .reading-main {
+    position: relative;
+    z-index: 2;
+    padding: 3rem var(--pad) 5rem;
+  }
+
+  @media (max-width: 720px) {
+    .topbar-inner { padding: 0.9rem 1.25rem; gap: 1rem; flex-wrap: wrap; }
+    .topbar-home { font-size: 1.05rem; }
+    .topbar-nav { gap: 0.9rem; }
+    .reading-main { padding: 1.75rem 1.25rem 3.5rem; }
+  }
+</style>

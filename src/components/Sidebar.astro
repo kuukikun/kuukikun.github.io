@@ -1,0 +1,145 @@
+---
+const pathname = Astro.url.pathname;
+const nav = [
+  { label: 'ESSAYS', href: '/essays/' },
+  { label: 'PHOTOS', href: '/photos/' },
+  { label: 'ABOUT', href: '/about/' },
+];
+const isActive = (href: string) =>
+  href === '/' ? pathname === '/' : pathname.startsWith(href);
+---
+
+<aside class="sidebar">
+  <input type="checkbox" id="navToggle" class="nav-toggle" hidden />
+  <div class="sidebar-top">
+    <a class="sitename" href="/">空気の喫茶店</a>
+    <label for="navToggle" class="nav-toggle-label" aria-label="切换菜单">☰</label>
+  </div>
+
+  <div class="sidebar-body">
+    <p class="intro">做最酷的 Lawyer。<br />随笔与摄影，一壶茶的功夫。</p>
+
+    <nav class="nav" aria-label="主导航">
+      <ul>
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} class={isActive(item.href) ? 'active' : ''}>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <section class="status">
+      <p class="eyebrow">近况</p>
+      <p>现居神户。今春入职某跨国企业法务，向着 in-house lawyer 精进中。</p>
+    </section>
+  </div>
+</aside>
+
+<style>
+  .sidebar {
+    font-family: var(--font-sans);
+    position: sticky;
+    top: 3.5rem;
+    align-self: start;
+    z-index: 2;
+  }
+  .sidebar-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .sitename {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+    line-height: 1.3;
+  }
+  .sitename:hover { color: var(--accent); text-decoration: none; }
+
+  .intro {
+    margin: 1.1rem 0 1.8rem;
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--ink-soft);
+  }
+
+  /* 导航：紧凑成一个块 */
+  .nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .nav li { margin: 0; }
+  .nav a {
+    display: block;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+  .nav a:hover { color: var(--accent); text-decoration: none; }
+  .nav a.active { color: var(--accent-ink); }
+  .nav a.active::before {
+    content: '';
+    display: inline-block;
+    width: 0.5em;
+    height: 0.5em;
+    margin-right: 0.5em;
+    border-radius: 999px;
+    background: var(--accent);
+    vertical-align: middle;
+  }
+
+  /* 近况：与导航拉开层级 */
+  .status {
+    margin-top: 2rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--line);
+  }
+  .status p { margin: 0; }
+  .status .eyebrow { margin-bottom: 0.5rem; }
+  .status p:last-child {
+    font-size: 0.85rem;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    font-family: var(--font-serif);
+  }
+
+  /* 移动端汉堡（CSS-only） */
+  .nav-toggle-label {
+    display: none;
+    cursor: pointer;
+    font-size: 1.4rem;
+    line-height: 1;
+    color: var(--ink-soft);
+    user-select: none;
+    padding: 0.1rem 0.3rem;
+  }
+
+  @media (max-width: 720px) {
+    .sidebar {
+      position: static;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 1rem;
+    }
+    .nav-toggle-label { display: inline-block; }
+    .sidebar-body {
+      display: none;
+      margin-top: 1.1rem;
+    }
+    .nav-toggle:checked ~ .sidebar-body { display: block; }
+    .intro { margin: 0.4rem 0 1.4rem; }
+  }
+</style>
