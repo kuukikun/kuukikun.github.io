@@ -9,7 +9,7 @@ const isActive = (href: string) =>
   href === '/' ? pathname === '/' : pathname.startsWith(href);
 ---
 
-<aside class="sidebar">
+<aside class="sidebar anim-fade">
   <input type="checkbox" id="navToggle" class="nav-toggle" hidden />
   <div class="sidebar-top">
     <a class="sitename" href="/">空気の喫茶店</a>
@@ -17,7 +17,7 @@ const isActive = (href: string) =>
   </div>
 
   <div class="sidebar-body">
-    <p class="intro">做最酷的 Lawyer。<br />随笔与摄影，一壶茶的功夫。</p>
+    <p class="intro">存放一些零碎的想法。</p>
 
     <nav class="nav" aria-label="主导航">
       <ul>
@@ -33,7 +33,7 @@ const isActive = (href: string) =>
 
     <section class="status">
       <p class="eyebrow">近况</p>
-      <p>现居神户。今春入职某跨国企业法务，向着 in-house lawyer 精进中。</p>
+      <p>从东京搬到了神户。<br />大概是一位，脑子里装着许多奇怪想法的 in-house lawyer 吧。</p>
     </section>
   </div>
 </aside>

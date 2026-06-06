@@ -225,9 +225,19 @@ const fmtDate = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}
     margin-top: 3rem;
     padding-top: 1.4rem;
     border-top: 1px solid var(--line);
-    font-family: var(--font-sans);
-    font-size: 0.85rem;
   }
+  /* 「回到首页」做成胶囊按钮，统一于 MORE POSTS / 标签风格 */
+  .back a {
+    display: inline-block;
+    padding: 0.42em 1em;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .back a:hover { background: var(--accent); color: #fff; text-decoration: none; }
 
   /* ===== 目录（#2）===== */
   .toc-inner {

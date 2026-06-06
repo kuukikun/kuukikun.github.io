@@ -28,7 +28,7 @@ const isActive = (href: string) => pathname.startsWith(href);
   <body class="cursor-knob">
     {reading ? (
       <>
-        <header class="topbar">
+        <header class="topbar anim-fade">
           <div class="topbar-inner">
             <a class="topbar-home" href="/">空気の喫茶店</a>
             <nav class="topbar-nav" aria-label="主导航">
@@ -38,14 +38,14 @@ const isActive = (href: string) => pathname.startsWith(href);
             </nav>
           </div>
         </header>
-        <main class="reading-main">
+        <main class="reading-main anim-rise">
           <slot />
         </main>
       </>
     ) : (
       <div class={wide ? 'layout wide' : 'layout'}>
         <Sidebar />
-        <main class="main">
+        <main class="main anim-rise">
           <slot />
         </main>
       </div>

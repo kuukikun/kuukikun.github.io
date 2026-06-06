@@ -129,6 +129,25 @@ body::after {
   background-size: 600px 600px;
 }
 
+/* ===========================================================================
+   入场动画：内容渐入（opacity + 轻微上移）。
+   仅在用户未要求减弱动态效果时启用；reduce 模式下不定义 → 内容直接全显，不隐形。
+   =========================================================================== */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes rise-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes soft-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  /* 主内容：渐入 + 轻微上移，略带延迟，跟在站名/导航之后出现 */
+  .anim-rise { animation: rise-in 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) 0.06s both; }
+  /* 侧栏 / 顶栏：仅淡入（不位移，避免影响 sticky 定位） */
+  .anim-fade { animation: soft-in 0.5s ease-out both; }
+}
+
 /* ---- 移动端汉堡开关（CSS-only，零 JS）---- */
 .nav-toggle { display: none; }
 .nav-toggle-label { display: none; }

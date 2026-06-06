@@ -15,3 +15,5 @@ npm-debug.log*
 clone_blog/
 # local editor / preview config
 .claude/
+# 本地写作指南（不公开）
+写作指南.md
