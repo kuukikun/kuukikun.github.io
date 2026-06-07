@@ -67,7 +67,7 @@ const fmtDate = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}
         <Content />
       </div>
 
-      <p class="back"><a href="/">← 回到首页</a></p>
+      <p class="back"><a href="/">← Home</a></p>
     </article>
 
     {showToc && (
@@ -229,12 +229,15 @@ const fmtDate = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}
   /* 「回到首页」做成胶囊按钮，统一于 MORE POSTS / 标签风格 */
   .back a {
     display: inline-block;
-    padding: 0.42em 1em;
+    padding: 0.42em 1.1em;
     border-radius: 999px;
     background: var(--accent-soft);
     color: var(--accent-ink);
-    font-family: var(--font-sans);
-    font-size: 0.8rem;
+    /* 字体与首页 MORE 对应：衬线、字距、大写 */
+    font-family: var(--font-serif);
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
     transition: background 0.2s ease, color 0.2s ease;
   }
   .back a:hover { background: var(--accent); color: #fff; text-decoration: none; }
