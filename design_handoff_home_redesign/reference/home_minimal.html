@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>空気の喫茶店</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Noto+Serif+JP:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ===== DESIGN TOKENS ===== */
+  :root{
+    --paper:#f5f1ea;        /* page background (warm paper) */
+    --ink:#36322d;          /* primary text */
+    --ink2:#544f48;         /* secondary text */
+    --muted:#a7a094;        /* labels / dates */
+    --faint:#c4bdb0;        /* faint dates */
+    --accent:#bf5b30;       /* terracotta — brand / active / hover */
+    --line:#e4ded2;         /* hairlines */
+    --maxw:1080px;          /* content max width */
+    --side:282px;           /* sidebar width (desktop) */
+    --gap:74px;             /* sidebar↔main gap (desktop) */
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Noto Serif SC","Noto Serif JP",serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:96px 40px 120px;}
+  .layout{display:grid;grid-template-columns:var(--side) 1fr;gap:var(--gap);align-items:start;}
+
+  /* ===== SIDEBAR ===== */
+  .brand{font-size:30px;font-weight:600;color:var(--accent);letter-spacing:.02em;margin:0 0 16px;line-height:1.2;}
+  .brand a{color:inherit;text-decoration:none;}
+  .tag{font-size:15px;color:var(--ink2);margin:0 0 40px;line-height:1.8;}
+
+  nav.menu{display:flex;flex-direction:column;gap:21px;margin-bottom:40px;}
+  nav.menu a{
+    display:flex;align-items:center;gap:13px;
+    font-family:"Noto Serif JP",serif;font-size:14px;font-weight:600;letter-spacing:.22em;
+    color:var(--ink2);text-decoration:none;width:max-content;transition:color .25s ease;
+  }
+  nav.menu a::before{                 /* the orange dot indicator */
+    content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);
+    opacity:0;transform:scale(.45);transition:opacity .25s ease,transform .25s ease;
+  }
+  nav.menu a:hover,nav.menu a[aria-current]{color:var(--accent);}
+  nav.menu a:hover::before,nav.menu a[aria-current]::before{opacity:1;transform:scale(1);}
+
+  .hr{height:1px;background:var(--line);margin:6px 0 30px;}
+  .now-h{font-size:14px;color:var(--muted);letter-spacing:.04em;margin:0 0 14px;}
+  .now-b{font-size:14.5px;color:var(--ink2);line-height:2;margin:0;}
+  .now-b em{font-style:normal;font-family:"Noto Serif JP",serif;}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);display:inline-block;margin-top:32px;}
+
+  /* ===== MAIN (minimal) ===== */
+  .main{min-height:430px;display:flex;flex-direction:column;justify-content:center;}
+  .quote{
+    font-size:30px;line-height:1.85;font-weight:500;color:var(--ink);max-width:18ch;margin:0;
+    transition:opacity .9s ease;
+  }
+  .quote .qmark{color:var(--accent);}
+
+  .recent3{margin-top:64px;}
+  .r3h{font-family:"Noto Serif JP",serif;font-size:12px;letter-spacing:.3em;color:var(--muted);margin:0 0 18px;}
+  .r3{display:flex;gap:18px;align-items:baseline;padding:11px 0;border-top:1px solid var(--line);text-decoration:none;}
+  .r3 .d{font-family:"Noto Serif JP",serif;font-size:12px;color:var(--faint);min-width:78px;}
+  .r3 .n{font-size:15px;color:var(--ink2);transition:color .2s ease;}
+  .r3:hover .n{color:var(--accent);}
+  .more{display:inline-block;margin-top:22px;font-family:"Noto Serif JP",serif;font-size:13px;letter-spacing:.18em;color:var(--muted);text-decoration:none;transition:color .2s ease;}
+  .more:hover{color:var(--accent);}
+
+  /* hamburger — hidden on desktop */
+  .burger{display:none;}
+
+  /* ===== RESPONSIVE: single column < 760px ===== */
+  @media (max-width:760px){
+    .wrap{padding:36px 24px 72px;}
+    .layout{grid-template-columns:1fr;gap:40px;}
+    .brand{font-size:26px;margin-bottom:10px;}
+    .tag{margin-bottom:22px;}
+    /* nav collapses behind a hamburger */
+    nav.menu{display:none;}
+    nav.menu.open{display:flex;}
+    .burger{
+      display:inline-flex;align-items:center;gap:10px;background:none;border:0;padding:6px 0;
+      font-family:"Noto Serif JP",serif;font-size:13px;letter-spacing:.2em;color:var(--ink2);cursor:pointer;
+    }
+    .burger span{width:18px;height:1.5px;background:var(--ink2);display:block;}
+    .hr{margin:24px 0;}
+    .main{min-height:auto;margin-top:8px;}
+    .quote{font-size:24px;}
+    .recent3{margin-top:40px;}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="layout">
+
+      <!-- ===== SIDEBAR ===== -->
+      <aside class="side">
+        <h1 class="brand"><a href="/">空気の喫茶店</a></h1>
+        <p class="tag">存放一些零碎的想法。</p>
+
+        <button class="burger" id="burger" aria-expanded="false" aria-controls="menu">
+          <span></span><span></span><span></span> MENU
+        </button>
+        <nav class="menu" id="menu">
+          <a href="/intro/">INTRO</a>
+          <a href="/essays/">ESSAYS</a>
+          <a href="/photos/">PHOTOS</a>
+          <a href="/about/">ABOUT</a>
+        </nav>
+
+        <div class="hr"></div>
+        <p class="now-h">近况</p>
+        <p class="now-b">从东京搬到了神户。<br>大概是一位，脑子里装着许多奇怪想法的 <em>in-house lawyer</em> 吧。</p>
+        <span class="dot"></span>
+      </aside>
+
+      <!-- ===== MAIN (minimal portal) ===== -->
+      <main class="main">
+        <!-- rotating excerpt line — pulled from a curated list (see excerpts.js below) -->
+        <p class="quote" id="quote"><span class="qmark">「</span>空気<span class="qmark">」</span>とは、<br>吸って吐いた物である。</p>
+
+        <div class="recent3">
+          <p class="r3h">最近</p>
+          <a class="r3" href="/posts/kobe-beginning/"><span class="d">2025.04.12</span><span class="n">神戸、はじまり</span></a>
+          <a class="r3" href="/posts/hokkaido-memories-1/"><span class="d">2025.01.21</span><span class="n">记忆中的北海道（一）</span></a>
+          <a class="r3" href="/posts/job-hunting-in-japan/"><span class="d">2024.07.23</span><span class="n">法学修士在日就职的一点感受</span></a>
+          <a class="more" href="/essays/">MORE →</a>
+        </div>
+      </main>
+
+    </div>
+  </div>
+
+<script>
+  /* ===== Rotating excerpt line =====
+     Curated list of excerpts pulled from the author's own posts.
+     EDIT THIS ARRAY to add/remove lines. Use <br> for a line break.
+     Crossfades every 4.2s; respects prefers-reduced-motion (no rotation). */
+  const EXCERPTS = [
+    '<span class="qmark">「</span>空気<span class="qmark">」</span>とは、<br>吸って吐いた物である。',
+    '比起故事的主角，<br>它更像记录者一般的存在。',
+    '阅读，<br>是一种更为沉默的交流。',
+    '那些细腻的事物——<br>脆弱，却又绚烂。'
+  ];
+  (function(){
+    var q=document.getElementById('quote');
+    var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!q||reduce||EXCERPTS.length<2)return;
+    var i=0;
+    setInterval(function(){
+      q.style.opacity=0;
+      setTimeout(function(){
+        i=(i+1)%EXCERPTS.length;
+        q.innerHTML=EXCERPTS[i];
+        q.style.opacity=1;
+      },900);
+    },4200);
+  })();
+
+  /* ===== Mobile menu toggle ===== */
+  (function(){
+    var b=document.getElementById('burger'), m=document.getElementById('menu');
+    if(!b||!m)return;
+    b.addEventListener('click',function(){
+      var open=m.classList.toggle('open');
+      b.setAttribute('aria-expanded',open?'true':'false');
+    });
+  })();
+</script>
+</body>
+</html>

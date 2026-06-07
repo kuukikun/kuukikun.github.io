@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>空気の喫茶店 — 首页改版方案</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Noto+Serif+JP:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f5f1ea;
+    --paper2:#f0ebe1;
+    --ink:#36322d;
+    --ink2:#544f48;
+    --muted:#a7a094;
+    --faint:#c4bdb0;
+    --accent:#bf5b30;
+    --green:#6e8a63;
+    --dot:#e7508f;
+    --line:#e4ded2;
+    --canvas:#d3d0ca;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--canvas);
+    font-family:"Noto Serif SC","Noto Serif JP",serif;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    padding:56px 40px 120px;
+  }
+  .page-head{max-width:1180px;margin:0 auto 44px;padding-left:4px;}
+  .page-head h1{
+    font-size:25px;font-weight:600;letter-spacing:.01em;margin:0 0 8px;color:#2b2823;
+  }
+  .page-head p{margin:0;color:#6b665d;font-size:15px;line-height:1.7;max-width:680px;}
+  .page-head .kw{color:var(--accent);}
+
+  .frame{max-width:1180px;margin:0 auto 60px;}
+  .frame-label{
+    display:flex;align-items:baseline;gap:14px;margin:0 0 16px;padding-left:4px;
+  }
+  .frame-label .idx{
+    font-family:"Noto Serif JP",serif;font-size:13px;font-weight:600;letter-spacing:.18em;
+    color:#fff;background:#2b2823;border-radius:5px;padding:5px 9px;line-height:1;
+  }
+  .frame-label .t{font-size:17px;font-weight:600;color:#2b2823;}
+  .frame-label .d{font-size:13.5px;color:#6b665d;}
+
+  .card{
+    background:var(--paper);
+    border-radius:14px;
+    box-shadow:0 1px 0 rgba(0,0,0,.04),0 22px 50px -28px rgba(60,50,40,.5);
+    overflow:hidden;
+  }
+  /* fake browser bar */
+  .bar{
+    display:flex;align-items:center;gap:7px;padding:13px 18px;
+    background:var(--paper2);border-bottom:1px solid var(--line);
+  }
+  .bar i{width:11px;height:11px;border-radius:50%;background:#d9d1c4;display:block;}
+  .bar .url{
+    margin-left:14px;font-family:"Noto Serif JP",serif;font-size:12.5px;color:#9a9388;
+    background:#fbf8f3;border:1px solid var(--line);border-radius:6px;padding:4px 12px;
+  }
+
+  .site{padding:70px 78px 78px;}
+  .layout{display:grid;grid-template-columns:282px 1fr;gap:74px;align-items:start;}
+
+  /* ---- sidebar ---- */
+  .side .brand{
+    font-size:30px;font-weight:600;color:var(--accent);letter-spacing:.02em;margin:0 0 16px;line-height:1.2;
+  }
+  .side .tag{font-size:15px;color:var(--ink2);margin:0 0 40px;line-height:1.8;}
+  nav.menu{display:flex;flex-direction:column;gap:21px;margin-bottom:40px;}
+  nav.menu a{
+    display:flex;align-items:center;gap:13px;
+    font-family:"Noto Serif JP",serif;font-size:14px;font-weight:600;letter-spacing:.22em;
+    color:var(--ink2);text-decoration:none;width:max-content;transition:color .25s ease;
+  }
+  nav.menu a::before{
+    content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);
+    opacity:0;transform:scale(.45);transition:opacity .25s ease,transform .25s ease;
+  }
+  nav.menu a:hover{color:var(--accent);}
+  nav.menu a:hover::before{opacity:1;transform:scale(1);}
+  nav.menu a.cur{color:var(--accent);}
+  nav.menu a.cur::before{opacity:1;transform:scale(1);}
+  .hr{height:1px;background:var(--line);margin:6px 0 30px;}
+  .side .now-h{font-size:14px;color:var(--muted);letter-spacing:.04em;margin:0 0 14px;}
+  .side .now-b{font-size:14.5px;color:var(--ink2);line-height:2;margin:0;}
+  .side .now-b em{font-style:normal;font-family:"Noto Serif JP",serif;}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);display:inline-block;}
+
+  /* ---- main generic ---- */
+  .main{min-height:560px;}
+  .sec-kicker{
+    font-family:"Noto Serif JP",serif;font-size:13px;font-weight:600;letter-spacing:.3em;
+    color:var(--muted);margin:0 0 26px;
+  }
+
+  /* feed timeline (Variation A) */
+  .lead{
+    font-size:19px;line-height:2.1;color:var(--ink);margin:0 0 8px;font-weight:500;
+  }
+  .lead .sm{display:block;font-size:14.5px;color:var(--muted);font-weight:400;margin-top:14px;line-height:1.9;}
+  .feed{border-top:1px solid var(--line);margin-top:40px;}
+  .item{
+    display:grid;grid-template-columns:96px 1fr auto;gap:26px;align-items:start;
+    padding:26px 0;border-bottom:1px solid var(--line);
+  }
+  .item .when{font-family:"Noto Serif JP",serif;font-size:13px;color:var(--muted);letter-spacing:.04em;padding-top:5px;}
+  .item .kind{
+    display:inline-block;font-family:"Noto Serif JP",serif;font-size:11px;font-weight:600;letter-spacing:.16em;
+    margin-bottom:9px;
+  }
+  .kind.e{color:var(--accent);} .kind.p{color:var(--green);}
+  .item h3{font-size:18px;font-weight:600;margin:0 0 7px;color:var(--ink);line-height:1.5;}
+  .item h3.jp{font-family:"Noto Serif JP",serif;}
+  .item p{font-size:14px;color:var(--ink2);line-height:1.85;margin:0;max-width:46ch;}
+  .thumb{width:92px;height:64px;border-radius:7px;background:
+    linear-gradient(135deg,#c9a878,#a9824f);align-self:center;}
+  .more{margin-top:30px;font-family:"Noto Serif JP",serif;font-size:13px;letter-spacing:.18em;color:var(--muted);}
+
+  /* featured + index (Variation B) */
+  .feat{
+    display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:stretch;
+    border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#fbf8f3;
+  }
+  .feat .ph{background:linear-gradient(150deg,#cdb083,#9e7748 70%);min-height:236px;}
+  .feat .ft{padding:34px 34px 30px;display:flex;flex-direction:column;justify-content:center;}
+  .feat .pin{font-family:"Noto Serif JP",serif;font-size:11px;font-weight:600;letter-spacing:.2em;color:var(--green);margin-bottom:14px;}
+  .feat h2{font-family:"Noto Serif JP",serif;font-size:24px;font-weight:600;margin:0 0 14px;color:var(--ink);line-height:1.45;}
+  .feat p{font-size:14.5px;color:var(--ink2);line-height:1.9;margin:0;}
+  .index{margin-top:42px;}
+  .index .rowh{font-family:"Noto Serif JP",serif;font-size:13px;letter-spacing:.3em;color:var(--muted);margin-bottom:6px;}
+  .ix{
+    display:grid;grid-template-columns:92px 1fr;gap:24px;padding:15px 4px;
+    border-bottom:1px solid var(--line);align-items:baseline;
+  }
+  .ix:first-of-type{border-top:1px solid var(--line);}
+  .ix .dt{font-family:"Noto Serif JP",serif;font-size:12.5px;color:var(--faint);}
+  .ix .ti{font-size:15.5px;color:var(--ink);font-weight:500;}
+  .ix .ti:hover{color:var(--accent);}
+
+  /* minimal (Variation C) */
+  .mini{display:flex;flex-direction:column;justify-content:center;min-height:430px;}
+  .quote{
+    font-size:30px;line-height:1.85;font-weight:500;color:var(--ink);max-width:18ch;margin:0;
+    transition:opacity .9s ease;
+  }
+  .quote .qmark{color:var(--accent);}
+  .mini .recent3{margin-top:64px;}
+  .r3h{font-family:"Noto Serif JP",serif;font-size:12px;letter-spacing:.3em;color:var(--muted);margin-bottom:18px;}
+  .r3{display:flex;gap:18px;align-items:baseline;padding:11px 0;border-top:1px solid var(--line);}
+  .r3 .d{font-family:"Noto Serif JP",serif;font-size:12px;color:var(--faint);min-width:78px;}
+  .r3 .n{font-size:15px;color:var(--ink2);}
+  .r3 .n:hover{color:var(--accent);}
+
+  /* reasoning card */
+  .reason{background:#fbf9f5;border:1px solid var(--line);border-radius:14px;padding:34px 40px;max-width:1180px;margin:0 auto 60px;}
+  .reason h2{font-size:16px;font-weight:600;color:#2b2823;margin:0 0 18px;letter-spacing:.02em;}
+  .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px 48px;}
+  .ritem{display:flex;gap:13px;font-size:14.5px;line-height:1.85;color:#4f4a42;}
+  .ritem b{color:var(--accent);font-weight:600;}
+  .rnum{flex:0 0 auto;width:23px;height:23px;border-radius:50%;background:#efe7da;color:#9a7a55;
+    font-family:"Noto Serif JP",serif;font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:600;margin-top:2px;}
+
+  .note{max-width:1180px;margin:0 auto;padding-left:6px;color:#6b665d;font-size:14px;line-height:1.85;}
+  .note b{color:#2b2823;}
+
+  /* about subpage mini preview */
+  .aboutcard{max-width:1180px;margin:0 auto 60px;}
+  .aboutcard .frame-label .idx{background:var(--accent);}
+  .ab{background:var(--paper);border-radius:14px;box-shadow:0 1px 0 rgba(0,0,0,.04),0 22px 50px -28px rgba(60,50,40,.5);padding:56px 64px;max-width:680px;}
+  .ab .h{font-family:"Noto Serif JP",serif;font-size:13px;font-weight:600;letter-spacing:.28em;color:var(--muted);margin:0 0 26px;}
+  .ab p{font-size:17px;line-height:2.15;color:var(--ink);margin:0 0 16px;}
+  .ab p:last-child{margin-bottom:0;color:var(--ink2);}
+  .ab .jpln{font-family:"Noto Serif JP",serif;}
+  .ab .em{color:var(--accent);}
+  .hint{display:inline-block;font-size:12.5px;color:#8d6a4f;background:#f3e9dd;border-radius:20px;padding:4px 12px;margin-left:10px;font-weight:500;letter-spacing:.02em;}
+</style>
+</head>
+<body>
+
+  <div class="page-head">
+    <h1>空気の喫茶店 · 首页改版方案 v2</h1>
+    <p>已按你的决定更新：导航去掉字头、改回<span class="kw">橙色小点</span>的指示；时间线维持现状（图文混排）；ABOUT 换成新短文案。剩下唯一要拍板的——<span class="kw">首页是「铺满」还是「极简」</span>。下面把两种都做出来放一起感受。</p>
+  </div>
+
+  <!-- reasoning -->
+  <div class="reason">
+    <h2>铺满 vs 极简 · 我的建议</h2>
+    <div class="rgrid">
+      <div class="ritem"><span class="rnum">满</span><div><b>铺满</b>：一进首页就是时间线，内容直给、像随时翻新的日志。适合更新勤、想让人立刻读到东西。代价是少了点安静。</div></div>
+      <div class="ritem"><span class="rnum">简</span><div><b>极简</b>：首页几乎只剩门面，内容都在子页。最安静、最「喫茶店」。代价：纯空白会让初次来的人以为「还没做完」。</div></div>
+      <div class="ritem"><span class="rnum">★</span><div><b>我推荐居中</b>：极简骨架 + 一点活着的信号——一句轮换的「零碎想法」当门面 + 一个很小的「最近三篇」。安静，但有生气，一点即达。</div></div>
+      <div class="ritem"><span class="rnum">✎</span><div><b>子页拆分</b>：INTRO＝长自述（空気／喫茶店由来）；ABOUT＝你新给的短文案；ESSAYS・PHOTOS 照旧。</div></div>
+    </div>
+  </div>
+
+  <!-- 极简 (推荐) -->
+  <div class="frame">
+    <div class="frame-label"><span class="idx">极 简</span><span class="t">极简首页 · 门户式（推荐）</span><span class="d">安静的骨架 + 一句轮换的「零碎想法」+ 很小的最近三篇 · 导航悬停／所在＝橙色小点</span></div>
+    <div class="card">
+      <div class="bar"><i></i><i></i><i></i><span class="url">kuukikun.github.io</span></div>
+      <div class="site"><div class="layout">
+        <aside class="side">
+          <div class="brand">空気の喫茶店</div>
+          <p class="tag">存放一些零碎的想法。</p>
+          <nav class="menu">
+            <a href="#">INTRO</a>
+            <a href="#">ESSAYS</a>
+            <a href="#">PHOTOS</a>
+            <a class="cur" href="#">ABOUT</a>
+          </nav>
+          <div class="hr"></div>
+          <p class="now-h">近况</p>
+          <p class="now-b">从东京搬到了神户。<br>大概是一位，脑子里装着许多奇怪想法的 <em>in-house lawyer</em> 吧。</p>
+          <div style="margin-top:32px"><span class="dot"></span></div>
+        </aside>
+        <main class="main mini">
+          <p class="quote" id="quote"><span class="qmark">「</span>空気<span class="qmark">」</span>とは、<br>吸って吐いた物である。</p>
+          <div class="recent3">
+            <p class="r3h">最近</p>
+            <div class="r3"><span class="d">2025.04.12</span><span class="n">神戸、はじまり</span></div>
+            <div class="r3"><span class="d">2025.01.21</span><span class="n">记忆中的北海道（一）</span></div>
+            <div class="r3"><span class="d">2024.07.23</span><span class="n">法学修士在日就职的一点感受</span></div>
+            <div class="more" style="margin-top:22px">MORE →</div>
+          </div>
+        </main>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- 铺满 (时间线, 照现状) -->
+  <div class="frame">
+    <div class="frame-label"><span class="idx">铺 满</span><span class="t">铺满首页 · 时间线（照现状）</span><span class="d">就是现在的网页去掉那篇长自述，一进来直接是图文混排的 RECENT</span></div>
+    <div class="card">
+      <div class="bar"><i></i><i></i><i></i><span class="url">kuukikun.github.io</span></div>
+      <div class="site"><div class="layout">
+        <aside class="side">
+          <div class="brand">空気の喫茶店</div>
+          <p class="tag">存放一些零碎的想法。</p>
+          <nav class="menu">
+            <a href="#">INTRO</a>
+            <a href="#">ESSAYS</a>
+            <a href="#">PHOTOS</a>
+            <a href="#">ABOUT</a>
+          </nav>
+          <div class="hr"></div>
+          <p class="now-h">近况</p>
+          <p class="now-b">从东京搬到了神户。<br>大概是一位，脑子里装着许多奇怪想法的 <em>in-house lawyer</em> 吧。</p>
+          <div style="margin-top:32px"><span class="dot"></span></div>
+        </aside>
+        <main class="main">
+          <p class="sec-kicker">RECENT</p>
+          <div class="feed">
+            <div class="item"><div class="when">2025.04.12</div><div><span class="kind p">PHOTO</span><h3 class="jp">神戸、はじまり</h3><p>搬到神户后的第一组散步随拍。海与山之间，傍晚的光线很温柔。</p></div><div class="thumb"></div></div>
+            <div class="item"><div class="when">2025.01.21</div><div><span class="kind e">ESSAY</span><h3>记忆中的北海道（一）</h3><p>提交了修士论文，留学生活也即将接近尾声。回想起第一次去到「北国」的那个夜晚。</p></div><div></div></div>
+            <div class="item"><div class="when">2024.07.23</div><div><span class="kind e">ESSAY</span><h3>法学修士在日就职的一点感受</h3><p>从律所、企业法务，到法律行业以外的其他行业的一点体会。</p></div><div></div></div>
+            <div class="item"><div class="when">2021.03.14</div><div><span class="kind e">ESSAY</span><h3>「憂一乗」翻译</h3><p>尝试翻译了 ヨルシカ 的「憂一乗」，很喜欢的一首歌。词曲：N-buna。</p></div><div></div></div>
+          </div>
+          <div class="more">MORE →</div>
+        </main>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- 杂志 (可选) -->
+  <div class="frame">
+    <div class="frame-label"><span class="idx">杂 志</span><span class="t">杂志式铺满 · 另一种选择</span><span class="d">一篇置顶大图 + 其余压成索引 · 想突出照片随笔时好用</span></div>
+    <div class="card">
+      <div class="bar"><i></i><i></i><i></i><span class="url">kuukikun.github.io</span></div>
+      <div class="site"><div class="layout">
+        <aside class="side">
+          <div class="brand">空気の喫茶店</div>
+          <p class="tag">存放一些零碎的想法。</p>
+          <nav class="menu">
+            <a href="#">INTRO</a>
+            <a href="#">ESSAYS</a>
+            <a href="#">PHOTOS</a>
+            <a href="#">ABOUT</a>
+          </nav>
+          <div class="hr"></div>
+          <p class="now-h">近况</p>
+          <p class="now-b">从东京搬到了神户。<br>大概是一位，脑子里装着许多奇怪想法的 <em>in-house lawyer</em> 吧。</p>
+          <div style="margin-top:32px"><span class="dot"></span></div>
+        </aside>
+        <main class="main">
+          <p class="sec-kicker">FEATURED</p>
+          <div class="feat">
+            <div class="ph"></div>
+            <div class="ft">
+              <div class="pin">PHOTO · 置顶</div>
+              <h2>神戸、はじまり</h2>
+              <p>搬到神户后的第一组散步随拍。海与山之间，傍晚的光线很温柔。</p>
+            </div>
+          </div>
+          <div class="index">
+            <div class="rowh">ESSAYS · 索引</div>
+            <div class="ix"><span class="dt">2025.01.21</span><span class="ti">记忆中的北海道（一）</span></div>
+            <div class="ix"><span class="dt">2024.07.23</span><span class="ti">法学修士在日就职的一点感受</span></div>
+            <div class="ix"><span class="dt">2021.03.14</span><span class="ti">「憂一乗」翻译</span></div>
+            <div class="ix"><span class="dt">2020.08.15</span><span class="ti">友人</span></div>
+            <div class="ix"><span class="dt">2020.06.30</span><span class="ti">近日的一些想法</span></div>
+            <div class="ix"><span class="dt">2019.02.27</span><span class="ti">与法学的初遇</span></div>
+          </div>
+          <div class="more">ALL POSTS →</div>
+        </main>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ABOUT 子页新文案 -->
+  <div class="aboutcard">
+    <div class="frame-label"><span class="idx">A B O U T</span><span class="t">ABOUT 子页 · 新文案</span><span class="d">已用你给的短版替换掉原来的长自述</span><span class="hint">点 ABOUT 才进来</span></div>
+    <div class="ab">
+      <p class="h">ABOUT</p>
+      <p class="jpln"><span class="em">「</span>空気<span class="em">」</span>とは、吸って吐いた物である。</p>
+      <p>做最酷的 Lawyer。</p>
+      <p>现居神户，慶應義塾大学法学研究科・民事法学専攻修士毕业，研究方向民法。</p>
+      <p>愿你在此驻足片刻，沏一壶茶，享受一分宁静。遇见你很高兴～</p>
+    </div>
+  </div>
+
+  <p class="note"><b>下一步</b>：你只要拍板 <b>极简</b> 还是 <b>铺满</b>（我推荐极简骨架 + 最近三篇）。定了我就把那一版做成可点的高保真原型——导航悬停的橙色小点、移动端折叠菜单、INTRO 长自述子页都补全。</p>
+
+<script>
+  // gentle rotation of the "零碎想法" line in Variation C
+  (function(){
+    var q=document.getElementById('quote');
+    if(!q)return;
+    var lines=[
+      '<span class="qmark">「</span>空気<span class="qmark">」</span>とは、<br>吸って吐いた物である。',
+      '比起故事的主角，<br>它更像记录者一般的存在。',
+      '阅读，<br>是一种更为沉默的交流。',
+      '那些细腻的事物——<br>脆弱，却又绚烂。'
+    ];
+    var i=0;
+    setInterval(function(){
+      q.style.opacity=0;
+      setTimeout(function(){
+        i=(i+1)%lines.length;
+        q.innerHTML=lines[i];
+        q.style.opacity=1;
+      },900);
+    },4200);
+  })();
+</script>
+</body>
+</html>

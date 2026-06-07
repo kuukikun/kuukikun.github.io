@@ -7,23 +7,24 @@
 @import '@fontsource/inter/600.css';
 
 :root {
-  /* 色彩 */
-  --bg:        #F6F3ED; /* 象牙底 */
-  --bg-soft:   #EDE6DA; /* 标签 / 卡片底 */
-  --ink:       #211C17; /* 正文墨色 */
-  --ink-soft:  #5A534A; /* 次级文字 */
-  --muted:     #8C8278; /* 弱化 / 元信息 */
-  --line:      #E5DFD3; /* 发丝分隔线 */
-  --accent:    #E35414; /* 复古暖橙：链接 / hover / active / 鼠标指针 */
-  --accent-ink:#C2440F; /* 橙字落浅底时用的深一档（保证对比度可读） */
-  --accent-soft: #F6DBCB; /* 柔和橙：高亮胶囊底（克制、统一于标签风格） */
-  --accent-tint: rgba(227, 84, 20, 0.16); /* ::selection 的柔和橙底 */
+  /* 色彩（design_handoff_home_redesign 配色） */
+  --bg:        #f5f1ea; /* 暖纸底 (paper) */
+  --bg-soft:   #ece5d9; /* 标签 / 卡片底 */
+  --ink:       #36322d; /* 主文字 */
+  --ink-soft:  #544f48; /* 次级文字 (ink2) */
+  --muted:     #a7a094; /* 标签 / 小标题 */
+  --faint:     #c4bdb0; /* 弱化日期 */
+  --line:      #e4ded2; /* 发丝分隔线 */
+  --accent:    #bf5b30; /* 赭石红：品牌 / 链接 / hover / active / 鼠标指针 */
+  --accent-ink:#a64e29; /* 赭石红落浅底时的深一档（保证对比度可读） */
+  --accent-soft: #efd9cb; /* 柔和赭石：高亮胶囊底 */
+  --accent-tint: rgba(191, 91, 48, 0.16); /* ::selection 的柔和底 */
   --tag-essay: #7A5A38; /* essay 标签字（底 --bg-soft） */
   --tag-photo-bg: #E3EAE6; /* photo 标签底 */
   --accent-2:  #3E6356; /* 深苔绿：photo 标签字 */
 
-  /* 字体 */
-  --font-serif: 'Noto Serif SC', 'Songti SC', 'Source Han Serif SC', serif;
+  /* 字体（中日文衬线，含 JP 假名兜底） */
+  --font-serif: 'Noto Serif SC', 'Noto Serif JP', 'Songti SC', 'Hiragino Mincho ProN', 'Source Han Serif SC', serif;
   --font-sans:  'Inter', 'Noto Sans SC', 'PingFang SC', system-ui, sans-serif;
   --font-mono:  ui-monospace, 'SFMono-Regular', monospace;
 
@@ -32,9 +33,9 @@
   --radius-sm: 4px;     /* 图片缩略 */
   --maxw-read: 34em;    /* 正文阅读行宽 */
 
-  /* 布局 */
-  --sidebar-w: 16rem;
-  --gap:       3.5rem;
+  /* 布局（门户式：1080 容器 / 282 侧栏 / 74 间距） */
+  --sidebar-w: 282px;
+  --gap:       74px;
   --pad:       2rem;
 }
 
@@ -97,9 +98,10 @@ h1, h2, h3, h4 { font-family: var(--font-serif); font-weight: 600; line-height: 
   display: grid;
   grid-template-columns: var(--sidebar-w) 1fr;
   gap: var(--gap);
-  max-width: 60rem;
+  max-width: 1080px;
   margin: 0 auto;
-  padding: 3.5rem var(--pad) 5rem;
+  padding: 96px 40px 120px;
+  align-items: start;
 }
 .layout.wide { max-width: 72rem; }
 .main { min-width: 0; }
@@ -152,11 +154,11 @@ body::after {
 .nav-toggle { display: none; }
 .nav-toggle-label { display: none; }
 
-@media (max-width: 720px) {
+@media (max-width: 760px) {
   .layout {
     grid-template-columns: 1fr;
-    gap: 1.75rem;
-    padding: 1.25rem 1.25rem 3.5rem;
+    gap: 40px;
+    padding: 36px 24px 72px;
   }
   body { font-size: 16px; }
 }

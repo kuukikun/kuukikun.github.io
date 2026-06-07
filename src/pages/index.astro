@@ -1,94 +1,111 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PostListItem from '../components/PostListItem.astro';
+import { excerpts } from '../data/excerpts';
 
 const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.getTime() - a.data.date.getTime(),
 );
-
-const VISIBLE = 4;
-const initial = posts.slice(0, VISIBLE);
-const rest = posts.slice(VISIBLE);
+const recent = posts.slice(0, 3);
+const fmt = (d: Date) =>
+  `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
 ---
 
 <BaseLayout title="空気の喫茶店">
-  <section class="intro-block">
-    <p>Hello，这里是空気。「空気」とは、吸って吐いた物である。</p>
-    <p>
-      提到空气，你会想到什么呢？透明的、淡淡的——它似乎总以一种旁观者的视角，静静看着周遭发生的一切。比起故事的主角，它更像是抽离在故事之外、记录者一般的存在。
-    </p>
-    <p>
-      大学时的我，是个奉行「节能主义」的人：对不感兴趣的话题不参与，也不多过问。这便是最初取用「空気」这个名字的缘由。后来，随着日语学习的深入，我渐渐痴迷于那些细腻的事物与情感——它们脆弱、转瞬即逝，却又华丽、绚烂。于是我想把它们记录下来。文字、声音、影像……我想，这或许是对抗世间的一种方式吧。到了这时，「空気」又多了一层意思。
-    </p>
-    <p>
-      从前的经历，让我更接近这样一个旁观者；常年的法学训练，也让我习惯于客观冷静地去分析。所以，「空気」这个名字，再适合不过了。
-    </p>
-    <p>
-      那么，又为什么叫「喫茶店」呢？喫茶店，是旧日的咖啡馆，是交流的场所。喝茶也好、喝咖啡也好，本身就是一种交流；而阅读文字，则是一种更为沉默的交流。当我们阅读时，会不自觉地揣摩他人的想法，或从他人的视角看待问题，或从自己的角度生出些看法——无论如何，我们都已与他人完成了一次「交流」。这里，是我存放文字与影像的自留地，而当你阅读到这里的时候，我们也已然完成了「交流」。这么说来，唤它一声「喫茶店」，也就再合适不过了。
-    </p>
-  </section>
+  <div class="home">
+    <p class="quote" id="quote" set:html={excerpts[0]}></p>
 
-  <section class="recent">
-    <h2 class="eyebrow recent-head">Recent</h2>
-    <div class="list">
-      {initial.map((post) => <PostListItem post={post} />)}
-
-      {rest.length > 0 && (
-        <>
-          <input type="checkbox" id="moreToggle" class="more-toggle" hidden />
-          <div class="more-list">
-            {rest.map((post) => <PostListItem post={post} />)}
-          </div>
-          <label for="moreToggle" class="more-btn" aria-label="展开更多文章">
-            More Posts
-          </label>
-        </>
-      )}
+    <div class="recent3">
+      <p class="r3h">最近</p>
+      {recent.map((p) => (
+        <a class="r3" href={`/posts/${p.id}/`}>
+          <span class="d">{fmt(p.data.date)}</span>
+          <span class="n">{p.data.title}</span>
+        </a>
+      ))}
+      <a class="more" href="/essays/">MORE →</a>
     </div>
-  </section>
+  </div>
 </BaseLayout>
 
+<script define:vars={{ excerpts }}>
+  // 轮换句：4.2s 交叉淡入；prefers-reduced-motion 时不轮换、停在第一句
+  const q = document.getElementById('quote');
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (q && !reduce && excerpts.length >= 2) {
+    let i = 0;
+    setInterval(() => {
+      q.style.opacity = '0';
+      setTimeout(() => {
+        i = (i + 1) % excerpts.length;
+        q.innerHTML = excerpts[i];
+        q.style.opacity = '1';
+      }, 900);
+    }, 4200);
+  }
+</script>
+
 <style>
-  .intro-block {
-    max-width: var(--maxw-read);
-    margin-bottom: 3rem;
-  }
-  /* 整段简介统一用淡灰字（与原首句一致） */
-  .intro-block p {
-    margin: 0 0 1rem;
-    font-size: 1.02rem;
-    line-height: 1.9;
-    color: var(--ink-soft);
+  /* 右栏极简门户：垂直居中 */
+  .home {
+    min-height: 430px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
-  .recent-head {
-    margin: 0 0 1.4rem;
-    padding-bottom: 0.6rem;
-    border-bottom: 1px solid var(--line);
+  .quote {
+    font-size: 30px;
+    line-height: 1.85;
+    font-weight: 500;
+    color: var(--ink);
+    max-width: 18ch;
+    margin: 0;
+    transition: opacity 0.9s ease;
   }
+  .quote :global(.qmark) { color: var(--accent); }
 
-  /* 折叠的「更多」列表（CSS-only，零 JS） */
-  .more-list { display: none; }
-  .more-toggle:checked ~ .more-list { display: block; }
-  .more-toggle:checked ~ .more-btn { display: none; }
+  .recent3 { margin-top: 64px; }
+  .r3h {
+    font-family: var(--font-serif);
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    margin: 0 0 18px;
+  }
+  .r3 {
+    display: flex;
+    gap: 18px;
+    align-items: baseline;
+    padding: 11px 0;
+    border-top: 1px solid var(--line);
+    text-decoration: none;
+  }
+  .r3 .d {
+    font-family: var(--font-serif);
+    font-size: 12px;
+    color: var(--faint);
+    min-width: 78px;
+  }
+  .r3 .n { font-size: 15px; color: var(--ink-soft); transition: color 0.2s ease; }
+  .r3:hover { text-decoration: none; }
+  .r3:hover .n { color: var(--accent); }
 
-  /* More Posts 胶囊：沿用 essay/photo 标签的圆角观感 */
-  .more-btn {
+  .more {
     display: inline-block;
-    margin-top: 1.4rem;
-    cursor: pointer;
-    font-family: var(--font-sans);
-    font-size: 0.72rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    padding: 0.42em 1em;
-    border-radius: 999px;
-    background: var(--accent-soft);
-    color: var(--accent-ink);
-    user-select: none;
-    transition: background 0.2s ease, color 0.2s ease;
+    margin-top: 22px;
+    font-family: var(--font-serif);
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
   }
-  .more-btn:hover { background: var(--accent); color: #fff; }
+  .more:hover { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 760px) {
+    .home { min-height: auto; margin-top: 8px; }
+    .quote { font-size: 24px; }
+    .recent3 { margin-top: 40px; }
+  }
 </style>

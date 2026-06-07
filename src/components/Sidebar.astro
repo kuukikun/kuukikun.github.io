@@ -1,145 +1,135 @@
 ---
 const pathname = Astro.url.pathname;
 const nav = [
+  { label: 'INTRO', href: '/intro/' },
   { label: 'ESSAYS', href: '/essays/' },
   { label: 'PHOTOS', href: '/photos/' },
   { label: 'ABOUT', href: '/about/' },
 ];
-const isActive = (href: string) =>
-  href === '/' ? pathname === '/' : pathname.startsWith(href);
+const isActive = (href: string) => pathname.startsWith(href);
 ---
 
 <aside class="sidebar anim-fade">
-  <input type="checkbox" id="navToggle" class="nav-toggle" hidden />
-  <div class="sidebar-top">
-    <a class="sitename" href="/">空気の喫茶店</a>
-    <label for="navToggle" class="nav-toggle-label" aria-label="切换菜单">☰</label>
-  </div>
+  <h1 class="brand"><a href="/">空気の喫茶店</a></h1>
+  <p class="tag">存放一些零碎的想法。</p>
 
-  <div class="sidebar-body">
-    <p class="intro">存放一些零碎的想法。</p>
+  <button class="burger" id="burger" aria-expanded="false" aria-controls="siteMenu">
+    <span></span><span></span><span></span> MENU
+  </button>
 
-    <nav class="nav" aria-label="主导航">
-      <ul>
-        {nav.map((item) => (
-          <li>
-            <a href={item.href} class={isActive(item.href) ? 'active' : ''}>
-              {item.label}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
+  <nav class="menu" id="siteMenu" aria-label="主导航">
+    {nav.map((item) => (
+      <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
+        {item.label}
+      </a>
+    ))}
+  </nav>
 
-    <section class="status">
-      <p class="eyebrow">近况</p>
-      <p>从东京搬到了神户。<br />大概是一位，脑子里装着许多奇怪想法的 in-house lawyer 吧。</p>
-    </section>
-  </div>
+  <div class="hr"></div>
+  <p class="now-h">近况</p>
+  <p class="now-b">从东京搬到了神户。<br />大概是一位，脑子里装着许多奇怪想法的 <em>in-house lawyer</em> 吧。</p>
+  <span class="deco-dot"></span>
 </aside>
 
+<script>
+  // 移动端 MENU 折叠（<760px）
+  const b = document.getElementById('burger');
+  const m = document.getElementById('siteMenu');
+  if (b && m) {
+    b.addEventListener('click', () => {
+      const open = m.classList.toggle('open');
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  }
+</script>
+
 <style>
-  .sidebar {
-    font-family: var(--font-sans);
-    position: sticky;
-    top: 3.5rem;
-    align-self: start;
-    z-index: 2;
-  }
-  .sidebar-top {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-  }
-  .sitename {
-    font-family: var(--font-serif);
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--ink);
-    letter-spacing: 0.01em;
-    line-height: 1.3;
-  }
-  .sitename:hover { color: var(--accent); text-decoration: none; }
+  .sidebar { position: sticky; top: 96px; align-self: start; z-index: 2; }
 
-  .intro {
-    margin: 1.1rem 0 1.8rem;
-    font-family: var(--font-serif);
-    font-size: 0.95rem;
-    line-height: 1.7;
+  .brand {
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    margin: 0 0 16px;
+  }
+  .brand a { color: inherit; text-decoration: none; }
+  .brand a:hover { text-decoration: none; }
+
+  .tag {
+    font-size: 15px;
     color: var(--ink-soft);
+    line-height: 1.8;
+    margin: 0 0 40px;
   }
 
-  /* 导航：紧凑成一个块 */
-  .nav ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  /* 导航：纵向，每项左侧预留橙点位 */
+  .menu { display: flex; flex-direction: column; gap: 21px; margin-bottom: 40px; }
+  .menu a {
     display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .nav li { margin: 0; }
-  .nav a {
-    display: block;
-    padding: 6px 10px;
-    border-radius: var(--radius-sm);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-size: 0.8rem;
+    align-items: center;
+    gap: 13px;
+    width: max-content;
+    font-family: var(--font-serif);
+    font-size: 14px;
     font-weight: 600;
+    letter-spacing: 0.22em;
     color: var(--ink-soft);
+    text-decoration: none;
+    transition: color 0.25s ease;
   }
-  .nav a:hover { color: var(--accent); text-decoration: none; }
-  .nav a.active { color: var(--accent-ink); }
-  .nav a.active::before {
+  .menu a::before {
     content: '';
-    display: inline-block;
-    width: 0.5em;
-    height: 0.5em;
-    margin-right: 0.5em;
-    border-radius: 999px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
     background: var(--accent);
-    vertical-align: middle;
+    opacity: 0;
+    transform: scale(0.45);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .menu a:hover,
+  .menu a[aria-current='page'] { color: var(--accent); text-decoration: none; }
+  .menu a:hover::before,
+  .menu a[aria-current='page']::before { opacity: 1; transform: scale(1); }
+
+  .hr { height: 1px; background: var(--line); margin: 6px 0 30px; }
+  .now-h { font-size: 14px; color: var(--muted); letter-spacing: 0.04em; margin: 0 0 14px; }
+  .now-b { font-size: 14.5px; color: var(--ink-soft); line-height: 2; margin: 0; }
+  .now-b em { font-style: normal; font-family: var(--font-serif); }
+  .deco-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+    margin-top: 32px;
   }
 
-  /* 近况：与导航拉开层级 */
-  .status {
-    margin-top: 2rem;
-    padding-top: 1.4rem;
-    border-top: 1px solid var(--line);
-  }
-  .status p { margin: 0; }
-  .status .eyebrow { margin-bottom: 0.5rem; }
-  .status p:last-child {
-    font-size: 0.85rem;
-    line-height: 1.65;
-    color: var(--ink-soft);
-    font-family: var(--font-serif);
-  }
+  /* 汉堡按钮默认隐藏（桌面） */
+  .burger { display: none; }
 
-  /* 移动端汉堡（CSS-only） */
-  .nav-toggle-label {
-    display: none;
-    cursor: pointer;
-    font-size: 1.4rem;
-    line-height: 1;
-    color: var(--ink-soft);
-    user-select: none;
-    padding: 0.1rem 0.3rem;
-  }
-
-  @media (max-width: 720px) {
-    .sidebar {
-      position: static;
-      border-bottom: 1px solid var(--line);
-      padding-bottom: 1rem;
+  @media (max-width: 760px) {
+    .sidebar { position: static; }
+    .brand { font-size: 26px; margin-bottom: 10px; }
+    .tag { margin-bottom: 22px; }
+    .menu { display: none; }
+    .menu.open { display: flex; }
+    .burger {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: none;
+      border: 0;
+      padding: 6px 0;
+      font-family: var(--font-serif);
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      color: var(--ink-soft);
+      cursor: pointer;
     }
-    .nav-toggle-label { display: inline-block; }
-    .sidebar-body {
-      display: none;
-      margin-top: 1.1rem;
-    }
-    .nav-toggle:checked ~ .sidebar-body { display: block; }
-    .intro { margin: 0.4rem 0 1.4rem; }
+    .burger span { width: 18px; height: 1.5px; background: var(--ink-soft); display: block; }
+    .hr { margin: 24px 0; }
   }
 </style>
