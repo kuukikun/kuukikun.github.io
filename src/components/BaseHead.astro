@@ -5,7 +5,7 @@ interface Props {
   title: string;
   description?: string;
 }
-const { title, description = '做最酷的Lawyer。' } = Astro.props;
+const { title, description = '存放一些零碎的想法。' } = Astro.props;
 const SITE = '空気の喫茶店';
 const fullTitle = title === SITE ? title : `${title} · ${SITE}`;
 ---
@@ -14,6 +14,13 @@ const fullTitle = title === SITE ? title : `${title} · ${SITE}`;
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="generator" content={Astro.generator} />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<!-- 中日文衬线（统一各设备渲染，含日文假名） -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Noto+Serif+JP:wght@400;500;600&display=swap"
+  rel="stylesheet"
+/>
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <meta name="author" content="空気" />
