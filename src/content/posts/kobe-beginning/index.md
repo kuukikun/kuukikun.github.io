@@ -16,7 +16,7 @@ gallery:
     alt: 黄昏时分的街角
     caption: 元町 · DJI Pocket 3
 lang: ja
-draft: false
+draft: true
 ---
 
 搬到神户的第一周，趁着傍晚的好天气出门散步。
@@ -24,3 +24,4 @@ draft: false
 海与山之间，黄昏的光线很温柔。这是一组占位示例，之后会换成真正拍下的照片。
 
 > 这是一篇摄影日记（photo）示例，用于验证首页混排与图集排版。
+
