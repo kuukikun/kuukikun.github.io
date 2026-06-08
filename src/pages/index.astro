@@ -64,6 +64,15 @@ const fmt = (d: Date) =>
     transition: opacity 0.9s ease;
   }
   .quote :global(.qmark) { color: var(--accent); }
+  /* 片单的小字（年份 · 导演） */
+  .quote :global(.qmeta) {
+    display: block;
+    margin-top: 0.5em;
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
 
   .recent3 { margin-top: 64px; }
   .r3h {
