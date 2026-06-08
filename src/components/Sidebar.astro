@@ -13,8 +13,14 @@ const isActive = (href: string) => pathname.startsWith(href);
   <h1 class="brand"><a href="/">空気の喫茶店</a></h1>
   <p class="tag">存放一些零碎的想法。</p>
 
-  <button class="burger" id="burger" aria-expanded="false" aria-controls="siteMenu">
-    <span></span><span></span><span></span> MENU
+  <button
+    class="nav-toggle-btn"
+    id="navToggleBtn"
+    aria-expanded="true"
+    aria-controls="siteMenu"
+    aria-label="收起或展开导航"
+  >
+    <span class="nav-switch"></span>
   </button>
 
   <nav class="menu" id="siteMenu" aria-label="主导航">
@@ -33,12 +39,12 @@ const isActive = (href: string) => pathname.startsWith(href);
 
 <script>
   // 移动端 MENU 折叠（<760px）
-  const b = document.getElementById('burger');
+  const b = document.getElementById('navToggleBtn');
   const m = document.getElementById('siteMenu');
   if (b && m) {
     b.addEventListener('click', () => {
-      const open = m.classList.toggle('open');
-      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      const collapsed = m.classList.toggle('collapsed');
+      b.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
     });
   }
 </script>
@@ -107,29 +113,55 @@ const isActive = (href: string) => pathname.startsWith(href);
     margin-top: 32px;
   }
 
-  /* 汉堡按钮默认隐藏（桌面） */
-  .burger { display: none; }
+  /* 导航开合开关（横线 + 小圆点）：仅移动端显示 */
+  .nav-toggle-btn { display: none; }
 
   @media (max-width: 760px) {
     .sidebar { position: static; }
     .brand { font-size: 26px; margin-bottom: 10px; }
     .tag { margin-bottom: 22px; }
-    .menu { display: none; }
-    .menu.open { display: flex; }
-    .burger {
+
+    /* 移动端默认直接展开四个栏目；收起时隐藏 */
+    .menu.collapsed { display: none; }
+
+    .nav-toggle-btn {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
       background: none;
       border: 0;
-      padding: 6px 0;
-      font-family: var(--font-serif);
-      font-size: 13px;
-      letter-spacing: 0.2em;
-      color: var(--ink-soft);
+      padding: 4px 0;
+      margin-bottom: 18px;
       cursor: pointer;
     }
-    .burger span { width: 18px; height: 1.5px; background: var(--ink-soft); display: block; }
+    .nav-switch { position: relative; display: inline-block; width: 32px; height: 10px; }
+    .nav-switch::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--line);
+      transform: translateY(-50%);
+    }
+    .nav-switch::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+      transform: translateY(-50%);
+      left: calc(100% - 9px); /* 展开：圆点在右 */
+      transition: left 0.3s ease, background 0.3s ease;
+    }
+    /* 收起：圆点滑到左端并转为弱化色 */
+    .nav-toggle-btn[aria-expanded='false'] .nav-switch::after {
+      left: 0;
+      background: var(--muted);
+    }
+
     .hr { margin: 24px 0; }
   }
 </style>
