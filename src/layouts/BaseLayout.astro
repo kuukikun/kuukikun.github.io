@@ -31,7 +31,7 @@ const isActive = (href: string) => pathname.startsWith(href);
       <>
         <header class="topbar anim-fade">
           <div class="topbar-inner">
-            <a class="topbar-home" href="/">空気の喫茶店</a>
+            <a class="topbar-home" href="/">空気喫茶店</a>
             <nav class="topbar-nav" aria-label="主导航">
               {nav.map((item) => (
                 <a href={item.href} class={isActive(item.href) ? 'active' : ''}>{item.label}</a>

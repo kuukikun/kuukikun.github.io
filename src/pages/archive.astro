@@ -9,7 +9,7 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
 );
 ---
 
-<BaseLayout title="全部" description="空気の喫茶店 · 全部文章">
+<BaseLayout title="全部" description="空気喫茶店 · 全部文章">
   <header class="page-head">
     <p class="eyebrow">All</p>
     <p class="lede">随笔与摄影日记，按时间排列，共 {posts.length} 篇。</p>

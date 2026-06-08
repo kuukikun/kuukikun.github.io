@@ -11,7 +11,7 @@ const fmt = (d: Date) =>
   `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
 ---
 
-<BaseLayout title="空気の喫茶店">
+<BaseLayout title="空気喫茶店">
   <div class="home">
     <p class="quote" id="quote" set:html={excerpts[0]}></p>
 
